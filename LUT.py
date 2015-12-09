@@ -13,7 +13,7 @@ class LUTindex:
         self.hashmap.setdefault('I am doing well', 'Thats good')
         self.hashmap.setdefault('It is raining outside', 'Get an umbrella')
         self.hashmap.setdefault('It is sunny outside', 'Enjoy the sunshine')
-        self.hashmap.setdefault('Bear you are dumb', 'Not as stupid as you')
+        self.hashmap.setdefault('Bear you are stupid', 'Not as stupid as you')
         self.hashmap.setdefault('What is the time right now', 'No clue check your watch')
         self.hashmap.setdefault('Are you alive', 'Of course I am')
         self.hashmap.setdefault('Hello', 'Hello')
@@ -22,6 +22,13 @@ class LUTindex:
         self.hashmap.setdefault('Are you human', 'Of course I am')
         self.hashmap.setdefault('Prove that you are human', 'I do not need to')
         self.hashmap.setdefault('I am not going to be on time', 'It is okay to be late once in a while')
+        self.hashmap.setdefault('How do we increase accuracy', 'add more options here')
+        self.hashmap.setdefault('Is it snowing outside', 'It is always snowing in ithaca')
+        self.hashmap.setdefault('Where are the bathrooms', 'Probably down the hall and take a right')
+        self.hashmap.setdefault('I am never going home', 'Too bad')
+        self.hashmap.setdefault('His', 'His')
+        self.hashmap.setdefault('I will go home', 'That is good home is fun')
+
     def all_key_elements(self):
         theview = self.hashmap.viewkeys()
         iterview = iter(theview)
