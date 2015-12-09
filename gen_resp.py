@@ -6,12 +6,17 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from LUT import LUTindex
 from nltk.tokenize import RegexpTokenizer
+from firebase import Firebase
+
+
 
 import os
 import sys
 
 readfromfile = "input.txt"
 writetofile = "output.txt"
+f = Firebase('https://fiery-heat-7465.firebaseio.com/message_list')
+
 
 def stopword_filter(words):
     return [w for w in words if w.lower() not in stopwords.words("english")]
@@ -91,7 +96,10 @@ class FindResp(object):
                 max_key = cur_key
 
         response = self.dictionary.get_response(max_key)
+        print 'hey'
         print response
+        r = f.push({'name': 'message', 'text': response})
+        print "done"
         self.write_to_output(response,writetofile)
         return text
 
