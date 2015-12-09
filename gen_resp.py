@@ -29,11 +29,12 @@ def tokenize_text(text):
     for (curword, tag) in tags:
         #This makes negative adjectives negated
         if tag == 'JJ':
-            str_negate = 'not'
-            if str_negate in line[:index]:
-                line[index] = str_negate + ' ' + line[index]
-                del line[line.index(str_negate)]
-                index -= 1
+            str_negate = ['not','no']
+            for neg_index in xrange(len(str_negate)):
+                if str_negate[neg_index] in line[:index]:
+                    line[index] = str_negate[neg_index] + ' ' + line[index]
+                    del line[line.index(str_negate[neg_index])]
+                    index -= 1
         
         index+=1
     line_priority = [0.5]*len(line)
@@ -75,6 +76,7 @@ class FindResp(object):
         if oldtext == text:
             return oldtext
 
+        print text
         line = tokenize_text(text)        
         keys = self.dictionary.get_key_elements()
         
