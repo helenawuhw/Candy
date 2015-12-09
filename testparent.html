@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+  </head>
+  <body>
+    <input type = 'text' id='received' placeholder = 'Message from your boy'>
+    <button id="translate">Translate</button>
+
+    <div id='messagesDiv'>
+      <input type='text' id='content' placeholder='Type your words to the baby here.'>
+      <button id="message_send">Send</button>
+    </div>
+
+    <div id='arithmetic'>
+      <input type='text' id='arith1' placeholder='1'>
+      <select id='operator'>
+        <option value="+">+</option>
+        <option value="=">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+      <input type='text' id='arith2' placeholder='1'>
+      <button id="arith_send">Send</button>
+    </div>
+
+    <div id='musicDiv'>
+      <input type='text' id='music' placeholder='Song name here.'>
+      <button id="music_send">Send</button>
+    </div>
+    <div id="translation"></div>
+
+
+    <script>
+      function translateText(response) {
+          //console.log(response);
+          document.getElementById("translation").innerHTML = response.data.translations[0].translatedText;
+        }
+
+        // When we add this script to the head, the request is sent off.
+        
+
+      $('#translate').click(function (e){
+        var newScript = document.createElement('script');
+        newScript.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(newScript);
+        var sourceText = escape($('#received').val());
+        // WARNING: be aware that YOUR-API-KEY inside html is viewable by all your users.
+        // Restrict your key to designated domains or use a proxy to hide your key
+        // to avoid misusage by other party.
+        var source = 'https://www.googleapis.com/language/translate/v2?key=AIzaSyDFprGWF6GaBExk9oHT4_qId1ku-gxffL8&source=zh-CN&target=en&callback=translateText&q=' + sourceText;
+        newScript.src = source;
+      })
+
+
+      var myDataRef = new Firebase('https://fiery-heat-7465.firebaseio.com/');
+
+
+      /*$('#messageInput').keypress(function (e) {
+        if (e.keyCode == 13) {
+          var name = $('#nameInput').val();
+          var text = $('#messageInput').val();
+          myDataRef.push({name: name, text: text});
+          $('#messageInput').val('');
+        }
+      });*/
+
+      myDataRef.on('child_added', function(snapshot) {
+        var msg = snapshot.val();
+        if (msg.name == 'kid'){
+          var rec = msg.text;
+          $('#received').val(rec);
+        }
+      })
+
+      $('#message_send').click(function (e){
+            var words = $('#content').val();
+            myDataRef.push({name: "message", text: words});
+            $('#content').val('');
+          }
+        );
+
+      $('#arith_send').click(function (e){
+          var first = $('#arith1').val();
+          var second = $('#arith2').val();
+          var op = $('#operator').val();
+          var problem = first + op + second;
+          myDataRef.push({name:"arithmetic", text: problem});
+
+      })
+
+      $('#music_send').click(function (e){
+            var songname = $('#music').val();
+            myDataRef.push({name: "music", text: songname});
+            $('#music').val('');
+          }
+        );
+
+      
+
+
+      /*myDataRef.on('child_added', function(snapshot) {
+        var message = snapshot.val();
+        displayChatMessage(message.name, message.text);
+      });
+      function displayChatMessage(name, text) {
+        $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;}*/
+    </script>
+  </body>
+</html>
+
