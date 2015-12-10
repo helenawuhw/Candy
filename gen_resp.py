@@ -34,20 +34,21 @@ def tokenize_text(text):
     #Removes punctuation
     line = [w.lower() for w in line if w.isalpha()]
     tags = nltk.pos_tag(line)
+    #print tags
     index = 0
     for (curword, tag) in tags:
         #This makes negative adjectives negated
-        str_negate = ['not','no', 'never']
-        if tag == 'JJ':
+        str_negate = ['not','no', 'never', 'neither', 'nor']
+        if tag == 'JJ' or tag == 'NN':
             for neg_index in xrange(len(str_negate)):
                 if str_negate[neg_index] in line[:index]:
-                    line[index] = str_negate[neg_index] + ' ' + line[index]
+                    line[index] = 'negate' + ' ' + line[index]
                     del line[line.index(str_negate[neg_index])]
                     index -= 1
         elif tag == 'VB':
             for neg_index in xrange(len(str_negate)):
                 if str_negate[neg_index] in line[:index]:
-                    line[index] = str_negate[neg_index] + ' ' + line[index]
+                    line[index] = 'negate' + ' ' + line[index]
                     del line[line.index(str_negate[neg_index])]
                     index -= 1
                             
@@ -73,7 +74,7 @@ class GenResp(Thread):
 
     def run(self):
         #always runs in the background
-        while self.time_out < 100:
+        while self.time_out < 60:
             new_text = self.findresp.process_text(self.current_text)
             if self.current_text == new_text:
                 self.time_out += 1
@@ -113,10 +114,7 @@ class FindResp(object):
                 max_key = cur_key
 
         response = self.dictionary.get_response(max_key)
-        print 'hey'
         print response
-        r = f.push({'name': 'message', 'text': response})
-        print "done"
         self.write_to_output(response,writetofile)
         return text
 
@@ -124,11 +122,14 @@ class FindResp(object):
         with self.monitor_write:
             update = 0
             filewrite = open(outfile,"w")
+            #TODO: maybe clear the db?
             while update == 0:
                 try:
-                    mturk = filewrite.write(text)
+                    filewrite.write(text)
+                    r = f.push({'name': 'message', 'text': text})
+                    print "done"
                     update = 1
-                except MyError as e:
+                except:
                     print 'waiting on file'
                     time.sleep(5.0)
             filewrite.close()
