@@ -13,10 +13,15 @@ import os
 import sys
 stemmer = PorterStemmer()
 
+#Variable to debug output
+debug = 0
+
+#Default store places
 readfromfile = "input.txt"
 writetofile = "output.txt"
-f = Firebase('https://fiery-heat-7465.firebaseio.com/message_list')
-
+fw = Firebase('https://fiery-heat-7465.firebaseio.com/message_list')
+fr = Firebase('https://fiery-heat-7465.firebaseio.com/read_message')
+testfile = "test_input.txt"
 
 def stopword_filter(words):
     return [w for w in words if w.lower() not in stopwords.words("english")]
@@ -27,36 +32,40 @@ def stem_filter(words):
 
 #To change the output, you need to modify this function
 #This creates the vectors that will be use to compare terms
-def tokenize_text(text):
+def tokenize_text(text, model=0):
     #Tokenizes words
     line = [word for sent in sent_tokenize(text) for word in word_tokenize(sent)]
-    line = stem_filter(line)
     #Removes punctuation
-    line = [w.lower() for w in line if w.isalpha()]
-    tags = nltk.pos_tag(line)
-    #print tags
-    index = 0
-    for (curword, tag) in tags:
-        #This makes negative adjectives negated
-        str_negate = ['not','no', 'never', 'neither', 'nor']
-        if tag == 'JJ' or tag == 'NN':
-            for neg_index in xrange(len(str_negate)):
-                if str_negate[neg_index] in line[:index]:
-                    line[index] = 'negate' + ' ' + line[index]
-                    del line[line.index(str_negate[neg_index])]
-                    index -= 1
-        elif tag == 'VB':
-            for neg_index in xrange(len(str_negate)):
-                if str_negate[neg_index] in line[:index]:
-                    line[index] = 'negate' + ' ' + line[index]
-                    del line[line.index(str_negate[neg_index])]
-                    index -= 1
-                            
-        index+=1
-    line_priority = [0.45]*len(line)
-    new_addition = stopword_filter(line)
-    new_addition_priority = [1]*len(new_addition)
-    return zip(line, line_priority) + zip(new_addition, new_addition_priority) 
+    if model == 0:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        tags = nltk.pos_tag(line)
+        #print tags
+        index = 0
+        for (curword, tag) in tags:
+            #This makes negative adjectives negated
+            str_negate = ['not','no', 'never', 'neither', 'nor']
+            if tag == 'JJ' or tag == 'NN':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = 'negate' + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+            elif tag == 'VB':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = 'negate' + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+                                
+            index+=1
+        line_priority = [0.45]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 1:
+        line_priority = [1]*len(line) 
+        return zip(line, line_priority)
 
 def cosine_similarity(vector1,vector2_words):
     total = 0.0
@@ -83,6 +92,19 @@ class GenResp(Thread):
             self.current_text = new_text
             time.sleep(5.0)
 
+class TestResp(Thread):
+    def __init__(self, findresp):
+        Thread.__init__(self)
+        self.findresp = findresp
+        with open(readfromfile,"r") as r:
+            self.testfile = r.read() 
+
+    def run(self):
+        #always runs in the background
+        #TODO
+        return
+
+
 class FindResp(object):
     def __init__(self, dictionary):
         self.dictionary = dictionary
@@ -91,11 +113,18 @@ class FindResp(object):
     def process_text(self, oldtext):
         
         #Get the line of text
-        with open(readfromfile,"r") as r:
-            text = r.read()
-        
-        if oldtext == text:
-            return oldtext
+        if debug == 1:
+            with open(readfromfile,"r") as r:
+                text = r.read()
+            if oldtext == text:
+                return oldtext
+        else:
+            mydict = fr.get()
+            res = sorted(fr.get().iterkeys())
+            text = str(mydict[res[len(res)-1]]['text'])
+            if oldtext == str(res[len(res)-1]):
+                return oldtext
+
 
         line = tokenize_text(text)        
         keys = self.dictionary.get_key_elements()
@@ -116,7 +145,10 @@ class FindResp(object):
         response = self.dictionary.get_response(max_key)
         print response
         self.write_to_output(response,writetofile)
-        return text
+        if debug == 1:
+            return text
+        else:
+            return str(res[len(res)-1])
 
     def write_to_output(self, text, outfile):
         with self.monitor_write:
@@ -126,7 +158,8 @@ class FindResp(object):
             while update == 0:
                 try:
                     filewrite.write(text)
-                    r = f.push({'name': 'message', 'text': text})
+                    r = fw.delete()
+                    r = fw.push({'name': 'message', 'text': text})
                     print "done"
                     update = 1
                 except:

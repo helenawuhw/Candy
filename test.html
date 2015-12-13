@@ -396,7 +396,7 @@ function speak_what(what){
 }
 
 
-var myDataRef = new Firebase('https://fiery-heat-7465.firebaseio.com/');
+var myDataRef = new Firebase('https://fiery-heat-7465.firebaseio.com/read_message'); 
 
 myDataRef.on('child_added', function(snapshot) {
         var msg = snapshot.val();
