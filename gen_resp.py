@@ -32,11 +32,11 @@ def stem_filter(words):
 
 #To change the output, you need to modify this function
 #This creates the vectors that will be use to compare terms
-def tokenize_text(text, model=0):
+def tokenize_text(text, model=0.0):
     #Tokenizes words
     line = [word for sent in sent_tokenize(text) for word in word_tokenize(sent)]
     #Removes punctuation
-    if model == 0:
+    if model == 0.0:
         line = stem_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
         tags = nltk.pos_tag(line)
@@ -63,10 +63,62 @@ def tokenize_text(text, model=0):
         new_addition = stopword_filter(line)
         new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)
-    elif model == 1:
+    elif model == 1.0:
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
-
+    elif model == 1.1:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [1]*len(line) 
+        return zip(line, line_priority)
+    elif model == 1.2:
+        line = stop_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [1]*len(line) 
+        return zip(line, line_priority)
+    elif model == 1.3:
+        line = stem_filter(line)
+        line = stop_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [1]*len(line) 
+        return zip(line, line_priority)
+    elif model == 2.0:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.25]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.1:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.35]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.2:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.45]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.3:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.55]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.4:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.75]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.5:
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [1]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+        
 def cosine_similarity(vector1,vector2_words):
     total = 0.0
     for i in xrange(len(vector1)):
@@ -83,14 +135,14 @@ class GenResp(Thread):
 
     def run(self):
         #always runs in the background
-        while self.time_out < 60:
+        while self.time_out < 300:
             new_text = self.findresp.process_text(self.current_text)
             if self.current_text == new_text:
                 self.time_out += 1
             else:
                 self.time_out = 0
             self.current_text = new_text
-            time.sleep(5.0)
+            time.sleep(1.0)
 
 class TestResp(Thread):
     def __init__(self, findresp):
