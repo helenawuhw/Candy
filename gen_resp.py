@@ -72,13 +72,13 @@ def tokenize_text(text, model=0.0):
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 1.2:
-        line = stop_filter(line)
+        line = stopword_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 1.3:
         line = stem_filter(line)
-        line = stop_filter(line)
+        line = stopword_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
@@ -148,12 +148,29 @@ class TestResp(Thread):
     def __init__(self, findresp):
         Thread.__init__(self)
         self.findresp = findresp
-        with open(readfromfile,"r") as r:
-            self.testfile = r.read() 
+        self.float_vec = [[1.0,1.1,1.2,1.3],[2.0,2.1,2.2,2.3,2.4,2.5]]
+        with open(testfile,"r") as r:
+            self.testfile = r.read().split("\n") 
 
     def run(self):
-        #always runs in the background
         #TODO
+        #---------------------------
+        #Test for stemming versus stopping
+        tests = self.float_vec[0]
+        for test_element in tests:
+            for line in self.testfile:
+                test_line = line.split(":")
+                print test_line
+                predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
+                actualresp = test_line[1]
+        #TODO
+        #---------------------------
+        #Test for weight of words
+
+        #TODO
+        #---------------------------
+        #Test for negation
+
         return
 
 
@@ -162,23 +179,26 @@ class FindResp(object):
         self.dictionary = dictionary
         self.monitor_write = Lock()
 
-    def process_text(self, oldtext):
+    def process_text(self, oldtext, write=1, testno=0.0, textline=' '):
         
         #Get the line of text
-        if debug == 1:
-            with open(readfromfile,"r") as r:
-                text = r.read()
-            if oldtext == text:
-                return oldtext
+        if write == 1:
+            if debug == 1:
+                with open(readfromfile,"r") as r:
+                    text = r.read()
+                if oldtext == text:
+                    return oldtext
+            else:
+                mydict = fr.get()
+                res = sorted(fr.get().iterkeys())
+                text = str(mydict[res[len(res)-1]]['text'])
+                if oldtext == str(res[len(res)-1]):
+                    return oldtext
         else:
-            mydict = fr.get()
-            res = sorted(fr.get().iterkeys())
-            text = str(mydict[res[len(res)-1]]['text'])
-            if oldtext == str(res[len(res)-1]):
-                return oldtext
+            text = textline
 
 
-        line = tokenize_text(text)        
+        line = tokenize_text(text,testno)        
         keys = self.dictionary.get_key_elements()
         print line
 
@@ -196,11 +216,14 @@ class FindResp(object):
 
         response = self.dictionary.get_response(max_key)
         print response
-        self.write_to_output(response,writetofile)
-        if debug == 1:
+        if write:
+            self.write_to_output(response,writetofile)
+        if write == 1 and debug == 1:
             return text
-        else:
+        elif write == 1 and debug == 0:
             return str(res[len(res)-1])
+        else:
+            return response
 
     def write_to_output(self, text, outfile):
         with self.monitor_write:
@@ -223,3 +246,4 @@ if __name__ == '__main__':
     dictionary = LUTindex()
     findresp  = FindResp(dictionary)
     GenResp(findresp).start()
+    #TestResp(findresp).start()

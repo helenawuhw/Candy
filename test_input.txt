@@ -1,1 +1,3 @@
-I am not hungry, tired or thirsty
+I am not hungry tired or thirsty:Then starve
+I am hungry tired or thirsty:Let's get food
+Sam is hungry not tired:Let's get food
