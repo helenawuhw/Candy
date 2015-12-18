@@ -1,3 +1,8 @@
 I am not hungry tired or thirsty:Then starve
 I am hungry tired or thirsty:Let's get food
 Sam is hungry not tired:Let's get food
+There is no way John is not hungry:Then starve
+I am okay:Thats good
+Are you alive:Of course I am
+Is he alive:Of course I am
+Hey there are a lot of words in this sentence but I am hungry:Let's get food

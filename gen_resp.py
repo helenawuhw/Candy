@@ -72,14 +72,14 @@ def tokenize_text(text, model=0.0):
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 1.2:
-        line = stopword_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
+        line = stopword_filter(line)
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 1.3:
         line = stem_filter(line)
-        line = stopword_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
+        line = stopword_filter(line)
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 2.0:
@@ -153,19 +153,43 @@ class TestResp(Thread):
             self.testfile = r.read().split("\n") 
 
     def run(self):
-        #TODO
         #---------------------------
         #Test for stemming versus stopping
+        numcases = float(len(self.testfile))
         tests = self.float_vec[0]
+        print "----------------------------"
+        print "stemming vs stopping"
         for test_element in tests:
+            count = 0.0
             for line in self.testfile:
                 test_line = line.split(":")
-                print test_line
+                #print test_line
                 predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
                 actualresp = test_line[1]
-        #TODO
+                if actualresp == predictedresp:
+                    count += (1.0/numcases)
+            print '*********'
+            print 'test number: ' + str(test_element)
+            print 'accuracy: ' + str(count)
+
         #---------------------------
         #Test for weight of words
+        tests = self.float_vec[1]
+        print "----------------------------"
+        print "testing different weights"
+        for test_element in tests:
+            count = 0.0
+            for line in self.testfile:
+                test_line = line.split(":")
+                predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
+                actualresp = test_line[1]
+                if actualresp == predictedresp:
+                    count += (1.0/numcases)
+            print '*********'
+            print 'test number: ' + str(test_element)
+            print 'accuracy: ' + str(count)
+
+
 
         #TODO
         #---------------------------
@@ -182,8 +206,8 @@ class FindResp(object):
     def process_text(self, oldtext, write=1, testno=0.0, textline=' '):
         
         #Get the line of text
-        if write == 1:
-            if debug == 1:
+        if write:
+            if debug:
                 with open(readfromfile,"r") as r:
                     text = r.read()
                 if oldtext == text:
@@ -200,7 +224,8 @@ class FindResp(object):
 
         line = tokenize_text(text,testno)        
         keys = self.dictionary.get_key_elements()
-        print line
+        if write:
+            print line
 
         #Sets up default okay response. Will return "OK" if none seem to match
         max_sim = 0.05
@@ -208,14 +233,19 @@ class FindResp(object):
         keys.sort()
 
         for cur_key in keys[1:]:
-            tokenwords = zip(*tokenize_text(cur_key))[0]
+            temptext = tokenize_text(cur_key,testno)
+            if len(temptext) > 1:
+                tokenwords = zip(*temptext)[0]
+            else:
+                tokenwords = []
             cur_sim = cosine_similarity(line, tokenwords)
             if cur_sim > max_sim:
                 max_sim = cur_sim
                 max_key = cur_key
 
         response = self.dictionary.get_response(max_key)
-        print response
+        if write:
+            print response
         if write:
             self.write_to_output(response,writetofile)
         if write == 1 and debug == 1:
