@@ -6,3 +6,29 @@ I am okay:Thats good
 Are you alive:Of course I am
 Is he alive:Of course I am
 Hey there are a lot of words in this sentence but I am hungry:Let's get food
+Hey there are a lot of words in this sentence like a lot more than anyone else is used to but is is okay maybe some test cases will miss this one but I am hungry:Let's get food
+His cat is hungry:Let's get food
+His cat is not hungry:Then starve
+I am so tired but I am not going home:Too bad
+But I will go home:That is good home is fun
+I am not doing well:Feel better
+Hey you are human right:Of course I am
+Please show me that you are human:I do not need to
+Are you going to have the time:No check your watch
+There is no snow:Probably due to global warming
+Hey I do not have any credit for this class:then take it
+I am credit card hungry I will give my number away to everyone:good I will just steal your identity now
+Bear you are hungry:Let's get food
+Man you are hungry:Let's get food
+Hi:Hi
+Hi it is sunny outside:Enjoy the sunshine
+The ultimate test of length this test case is so long that matching is impossible there is no way that this person is human:Of course I am
+I am fat:go on a diet then
+Hey there are a lot of words in this sentence like a lot more than anyone else is used to but is is okay maybe some test cases will miss this one but I am not hungry:Then starve
+Hey hello how are you if you are fine then what is your credit card number:you should tell me yours first
+Hey hello robot I am going to get your credit card number from you okay are you fine with that if so then your credit card number you will give to me:you should tell me yours first
+I am never hungry:Then starve
+There is never any snow:Probably due to global warming
+I will not go home:Too bad
+I will go home:That is good home is fun
+I am never on time for these things:It is okay to be late once in a while

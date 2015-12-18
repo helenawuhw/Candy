@@ -59,7 +59,7 @@ def tokenize_text(text, model=0.0):
                         index -= 1
                                 
             index+=1
-        line_priority = [0.45]*len(line)
+        line_priority = [1]*len(line)
         new_addition = stopword_filter(line)
         new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)
@@ -83,46 +83,123 @@ def tokenize_text(text, model=0.0):
         line_priority = [1]*len(line) 
         return zip(line, line_priority)
     elif model == 2.0:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.05]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.1:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [0.15]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 2.2:
+        line = stem_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
         line_priority = [0.25]*len(line)
         new_addition = stopword_filter(line)
         new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)
-    elif model == 2.1:
-        line = [w.lower() for w in line if w.isalpha()]
-        line_priority = [0.35]*len(line)
-        new_addition = stopword_filter(line)
-        new_addition_priority = [1]*len(new_addition)
-        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
-    elif model == 2.2:
-        line = [w.lower() for w in line if w.isalpha()]
-        line_priority = [0.45]*len(line)
-        new_addition = stopword_filter(line)
-        new_addition_priority = [1]*len(new_addition)
-        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
     elif model == 2.3:
+        line = stem_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
-        line_priority = [0.55]*len(line)
+        line_priority = [0.5]*len(line)
         new_addition = stopword_filter(line)
         new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)
     elif model == 2.4:
-        line = [w.lower() for w in line if w.isalpha()]
-        line_priority = [0.75]*len(line)
-        new_addition = stopword_filter(line)
-        new_addition_priority = [1]*len(new_addition)
-        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
-    elif model == 2.5:
+        line = stem_filter(line)
         line = [w.lower() for w in line if w.isalpha()]
         line_priority = [1]*len(line)
         new_addition = stopword_filter(line)
         new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)
-        
+    elif model == 2.5:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [3]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)        
+    elif model == 2.6:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [9]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 3.0:
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        line_priority = [1]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 3.2:    
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        tags = nltk.pos_tag(line)
+        #print tags
+        index = 0
+        for (curword, tag) in tags:
+            #This makes negative adjectives negated
+            str_negate = ['not','no', 'never', 'neither', 'nor']
+            if tag == 'JJ' or tag == 'NN':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = 'negate' + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+            elif tag == 'VB':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = 'negate' + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+                                
+            index+=1
+        line_priority = [1]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition)
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)
+    elif model == 3.1:    
+        line = stem_filter(line)
+        line = [w.lower() for w in line if w.isalpha()]
+        tags = nltk.pos_tag(line)
+        #print tags
+        index = 0
+        for (curword, tag) in tags:
+            #This makes negative adjectives negated
+            str_negate = ['not','no', 'never', 'neither', 'nor']
+            if tag == 'JJ' or tag == 'NN':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = str_negate[neg_index] + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+            elif tag == 'VB':
+                for neg_index in xrange(len(str_negate)):
+                    if str_negate[neg_index] in line[:index]:
+                        line[index] = str_negate[neg_index] + ' ' + line[index]
+                        del line[line.index(str_negate[neg_index])]
+                        index -= 1
+                                
+            index+=1
+        line_priority = [1]*len(line)
+        new_addition = stopword_filter(line)
+        new_addition_priority = [1]*len(new_addition) 
+        return zip(line, line_priority) + zip(new_addition, new_addition_priority)  
 def cosine_similarity(vector1,vector2_words):
     total = 0.0
+    if vector1 is None:
+        return 0.0
     for i in xrange(len(vector1)):
         total+=(float(vector2_words.count(vector1[i][0]))*vector1[i][1]+0.00001)
+    if len(vector1) == 0:
+        return 0.0
     return total/(float(len(vector1)))
 
 #A thread to generate response. Will go to sleep after 5 seconds.
@@ -148,7 +225,7 @@ class TestResp(Thread):
     def __init__(self, findresp):
         Thread.__init__(self)
         self.findresp = findresp
-        self.float_vec = [[1.0,1.1,1.2,1.3],[2.0,2.1,2.2,2.3,2.4,2.5]]
+        self.float_vec = [[1.0,1.1,1.2,1.3],[2.0,2.1,2.2,2.3,2.4,2.5,2.6],[3.0,3.2,0.0]]
         with open(testfile,"r") as r:
             self.testfile = r.read().split("\n") 
 
@@ -185,15 +262,28 @@ class TestResp(Thread):
                 actualresp = test_line[1]
                 if actualresp == predictedresp:
                     count += (1.0/numcases)
+                #else:
+                #    print test_line[0]
             print '*********'
             print 'test number: ' + str(test_element)
             print 'accuracy: ' + str(count)
 
-
-
-        #TODO
         #---------------------------
         #Test for negation
+        tests = self.float_vec[2]
+        print "----------------------------"
+        print "testing negation"
+        for test_element in tests:
+            count = 0.0
+            for line in self.testfile:
+                test_line = line.split(":")
+                predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
+                actualresp = test_line[1]
+                if actualresp == predictedresp:
+                    count += (1.0/numcases)
+            print '*********'
+            print 'test number: ' + str(test_element)
+            print 'accuracy: ' + str(count)
 
         return
 
@@ -234,7 +324,7 @@ class FindResp(object):
 
         for cur_key in keys[1:]:
             temptext = tokenize_text(cur_key,testno)
-            if len(temptext) > 1:
+            if temptext is not None and len(temptext) > 1:
                 tokenwords = zip(*temptext)[0]
             else:
                 tokenwords = []

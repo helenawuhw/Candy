@@ -7,6 +7,7 @@ class LUTindex:
     def add_elements(self):
         self.hashmap.setdefault(' ', 'Okay')
         self.hashmap.setdefault('I am hungry', 'Let\'s get food')
+        self.hashmap.setdefault('you are so hungry', 'Let\'s get food')
         self.hashmap.setdefault('I am sleepy', 'You should go to bed')
         self.hashmap.setdefault('I am not hungry', 'Then starve')
         self.hashmap.setdefault('I am okay', 'Thats good')
@@ -24,7 +25,8 @@ class LUTindex:
         self.hashmap.setdefault('Prove that you are human', 'I do not need to')
         self.hashmap.setdefault('I am not going to be on time', 'It is okay to be late once in a while')
         self.hashmap.setdefault('How do we increase accuracy', 'add more options here')
-        self.hashmap.setdefault('Is it snowing outside', 'It is always snowing in ithaca')
+        self.hashmap.setdefault('It is snowing outside', 'It is always snowing in ithaca')
+        self.hashmap.setdefault('It is not snowing', 'Probably due to global warming')
         self.hashmap.setdefault('Where are the bathrooms', 'Probably down the hall and take a right')
         self.hashmap.setdefault('I am never going home', 'Too bad')
         self.hashmap.setdefault('His', 'His')
@@ -33,6 +35,9 @@ class LUTindex:
         self.hashmap.setdefault('My credit card number is', 'good I will just steal your identity now')
         self.hashmap.setdefault('hi I am hunting with a price of the same proportion', 'I am sorry we are all out of stock for that')
         self.hashmap.setdefault('How much does this shirt cost', 'an arm and a leg')
+        self.hashmap.setdefault('I need to take this class', 'then take it')
+        self.hashmap.setdefault('The man is fat', 'go on a diet then')
+        self.hashmap.setdefault('This project is annoying', 'life is annoying')
     def all_key_elements(self):
         theview = self.hashmap.viewkeys()
         iterview = iter(theview)
