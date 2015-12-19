@@ -14,7 +14,7 @@ import sys
 stemmer = PorterStemmer()
 
 #Variable to debug output
-debug = 0
+debug = 1
 
 #Default store places
 readfromfile = "input.txt"
@@ -44,17 +44,14 @@ def tokenize_text(text, model=0.0):
         index = 0
         for (curword, tag) in tags:
             #This makes negative adjectives negated
-            str_negate = ['not','no', 'never', 'neither', 'nor']
-            if tag == 'JJ' or tag == 'NN':
+            str_negate = ['not','no', 'never', 'neither', 'nor', 'not','no', 'never', 'neither', 'nor']
+            if tag == 'JJ' or tag == 'NN' or tag == 'VB':
                 for neg_index in xrange(len(str_negate)):
                     if str_negate[neg_index] in line[:index]:
-                        line[index] = 'negate' + ' ' + line[index]
-                        del line[line.index(str_negate[neg_index])]
-                        index -= 1
-            elif tag == 'VB':
-                for neg_index in xrange(len(str_negate)):
-                    if str_negate[neg_index] in line[:index]:
-                        line[index] = 'negate' + ' ' + line[index]
+                        if line[index].startswith('negate '):
+                            line[index] = line[index].replace('negate ','')
+                        else:
+                            line[index] = 'negate' + ' ' + line[index]
                         del line[line.index(str_negate[neg_index])]
                         index -= 1
                                 
@@ -174,23 +171,17 @@ def tokenize_text(text, model=0.0):
         for (curword, tag) in tags:
             #This makes negative adjectives negated
             str_negate = ['not','no', 'never', 'neither', 'nor']
-            if tag == 'JJ' or tag == 'NN':
+            if tag == 'JJ' or tag == 'NN' or tag == 'VB':
                 for neg_index in xrange(len(str_negate)):
                     if str_negate[neg_index] in line[:index]:
-                        line[index] = str_negate[neg_index] + ' ' + line[index]
-                        del line[line.index(str_negate[neg_index])]
-                        index -= 1
-            elif tag == 'VB':
-                for neg_index in xrange(len(str_negate)):
-                    if str_negate[neg_index] in line[:index]:
-                        line[index] = str_negate[neg_index] + ' ' + line[index]
+                        line[index] = 'negate' + ' ' + line[index]
                         del line[line.index(str_negate[neg_index])]
                         index -= 1
                                 
             index+=1
         line_priority = [1]*len(line)
         new_addition = stopword_filter(line)
-        new_addition_priority = [1]*len(new_addition) 
+        new_addition_priority = [1]*len(new_addition)
         return zip(line, line_priority) + zip(new_addition, new_addition_priority)  
 def cosine_similarity(vector1,vector2_words):
     total = 0.0
@@ -225,7 +216,7 @@ class TestResp(Thread):
     def __init__(self, findresp):
         Thread.__init__(self)
         self.findresp = findresp
-        self.float_vec = [[1.0,1.1,1.2,1.3],[2.0,2.1,2.2,2.3,2.4,2.5,2.6],[3.0,3.2,0.0]]
+        self.float_vec = [[1.0,1.1,1.2,1.3],[2.0,2.1,2.2,2.3,2.4,2.5,2.6],[3.0,3.2,3.1,0.0]]
         with open(testfile,"r") as r:
             self.testfile = r.read().split("\n") 
 
@@ -365,5 +356,5 @@ class FindResp(object):
 if __name__ == '__main__':
     dictionary = LUTindex()
     findresp  = FindResp(dictionary)
-    GenResp(findresp).start()
-    #TestResp(findresp).start()
+    #GenResp(findresp).start()
+    TestResp(findresp).start()
