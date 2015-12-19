@@ -14,7 +14,7 @@ import sys
 stemmer = PorterStemmer()
 
 #Variable to debug output
-debug = 1
+debug = 0
 
 #Default store places
 readfromfile = "input.txt"
@@ -234,7 +234,7 @@ class TestResp(Thread):
                 #print test_line
                 predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
                 actualresp = test_line[1]
-                if actualresp == predictedresp:
+                if actualresp.lower() == predictedresp.lower():
                     count += (1.0/numcases)
             print '*********'
             print 'test number: ' + str(test_element)
@@ -251,7 +251,7 @@ class TestResp(Thread):
                 test_line = line.split(":")
                 predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
                 actualresp = test_line[1]
-                if actualresp == predictedresp:
+                if actualres.lower() == predictedresp.lower():
                     count += (1.0/numcases)
                 #else:
                 #    print test_line[0]
@@ -270,7 +270,7 @@ class TestResp(Thread):
                 test_line = line.split(":")
                 predictedresp = findresp.process_text(' ',0,test_element,test_line[0])
                 actualresp = test_line[1]
-                if actualresp == predictedresp:
+                if actualresp.lower() == predictedresp.lower():
                     count += (1.0/numcases)
             print '*********'
             print 'test number: ' + str(test_element)
@@ -356,5 +356,5 @@ class FindResp(object):
 if __name__ == '__main__':
     dictionary = LUTindex()
     findresp  = FindResp(dictionary)
-    #GenResp(findresp).start()
-    TestResp(findresp).start()
+    GenResp(findresp).start()
+    #TestResp(findresp).start()
